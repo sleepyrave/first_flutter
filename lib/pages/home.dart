@@ -3,18 +3,50 @@ import 'package:fitness/models/diet_model.dart';
 import 'package:fitness/models/popular_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fitness/pages/login.dart';
+import 'package:fitness/pages/profile.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   List<CategoryModel> categories = [];
   List<DietModel> diets = [];
   List<PopularDietsModel> popularDiets = [];
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _getInitialInfo();
+  }
 
   void _getInitialInfo() {
     categories = CategoryModel.getCategories();
     diets = DietModel.getDiets();
     popularDiets = PopularDietsModel.getPopularDiets();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilePage()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -122,6 +154,23 @@ class HomePage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 40),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: const Color(0xff9DCEFF),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
       ),
     );
